@@ -1,26 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import NavBar from "./components/navbar";
+import Movies from "./components/movies";
+import { searchMovies } from "./services/itunes";
+import "./App.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      movies: []
+    };
+  }
+
+  handleSearch = term => {
+    searchMovies(term)
+      .then(data => {
+        this.setState({ movies: data.data.results });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  render() {
+    const { movies } = this.state;
+    return (
+      <React.Fragment>
+        <NavBar onSearch={this.handleSearch} />
+        <main className="container">
+          <Movies movies={movies} />
+        </main>
+      </React.Fragment>
+    );
+  }
 }
 
 export default App;
